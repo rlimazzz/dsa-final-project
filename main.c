@@ -5,7 +5,7 @@
 #include "./ListaSimplesmenteEncadeada/listaSimpEncad.h"
 
 FILE *reading() {
-    FILE *file = fopen("./arquivoLeitura/nomes_aleatorios.txt", "r");
+    FILE *file = fopen("./ArquivoLeitura/nomes_aleatorios.txt", "r");
 
     if(file == NULL) {
         printf("O arquivo não pode ser aberto\n");
