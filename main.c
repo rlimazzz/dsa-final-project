@@ -18,6 +18,14 @@ FILE *reading() {
 int main() {
     FILE *arquivo = reading();
 
-    
+    char nomes[500];
+
+    if(arquivo != NULL) {
+        while(fgets(nomes, 500, arquivo) != NULL) {
+            printf("%s", nomes);
+        }
+    }
+
+    fclose(arquivo);
     return 0;
 }
