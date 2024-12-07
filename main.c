@@ -3,6 +3,7 @@
 #include "./QuickSort/quickS.h"
 #include "./MergeSort/mergeS.h"
 #include "./ListaSimplesmenteEncadeada/listaSimpEncad.h"
+#include "./Timer/timer.h"
 
 FILE *reading() {
     FILE *file = fopen("./ArquivoLeitura/nomes_aleatorios.txt", "r");
@@ -16,6 +17,11 @@ FILE *reading() {
 }
 
 int main() {
+    Timer timer;
+
+    start_timer(&timer);
+    printf("Olá mundo\n");
+
     FILE *arquivo = reading();
 
     char nomes[500];
@@ -27,5 +33,10 @@ int main() {
     }
 
     fclose(arquivo);
+
+    stop_timer(&timer);
+
+    double elapsed = elapsed_time(&timer);
+    printf("Tempo de execução: %.6f segundos\n", elapsed);
     return 0;
 }
