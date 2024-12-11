@@ -1,45 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
-#include "mergeS.h"
 
-void merge(int *V, int inicio, int meio, int fim){
-    int *temp, p1, p2, tamanho, i, j, k;
-    int fim1 = 0, fim2 = 0;
-    tamanho = fim-inicio+1;
-    p1 = inicio;
-    p2 = meio+1;
-    temp = (int *) malloc(tamanho*sizeof(int));
-    if(temp != NULL){
-        for(i=0; i<tamanho; i++){
-            if(!fim1 && !fim2){
-                if(V[p1] < V[p2])
-                    temp[i]=V[p1++];
-                else
-                    temp[i]=V[p2++];
+void merge(char* array[], int left, int middle, int right) {
+    int n1 = middle - left + 1;
+    int n2 = right - middle;
 
-                if(p1>meio) fim1=1;
-                if(p2>fim) fim2=1;
-            }else{
-                if(!fim1)
-                    temp[i]=V[p1++];
-                else
-                    temp[i]=V[p2++];
-            }
+    char* leftArray[n1], * rightArray[n2];
+
+    for (int i = 0; i < n1; i++) {
+        leftArray[i] = array[left = i];
+    }
+
+    for (int j = 0; j < n2; j++) {
+        rightArray[j] = array[middle + 1 + j];
+    }
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (strcmp(leftArray[i], rightArray[j]) <= 0) {
+            array[k] = leftArray[i];
+            i++;
+        } else {
+            array[k] = rightArray[j];
+            j++;
         }
-        for(j=0, k=inicio; j<tamanho; j++, k++)
-            V[k]=temp[j];
+        k++;
     }
-    free(temp);
+
+    while (i < n1) {
+        array[k] = leftArray[i];
+        i++;
+        k++;
+    }
 }
 
-void mergeSort(int *V, int inicio, int fim){
-    int meio;
-    if(inicio < fim){
-        meio = floor((inicio+fim)/2);
-        mergeSort(V,inicio,meio);
-        mergeSort(V,meio+1,fim);
-        merge(V,inicio,meio,fim);
+void mergeSort(char* array[], int left, int right) {
+    if (left < right) {
+        int middle = left + (right - left) / 2;
+
+        mergeSort(array, left, middle);
+        mergeSort(array, middle + 1, right);
+
+        merge(array, left, middle, right);
     }
 }
+
+
+
