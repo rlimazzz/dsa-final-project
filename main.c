@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "./QuickSort/quickS.h"
 #include "./MergeSort/mergeS.h"
-#include "./ListaSimplesmenteEncadeada/listaSimpEncad.h"
+#include "./ListaSimplesmenteEncadeada/listaSimpEncadString.h"
 #include "./Timer/timer.h"
 
 FILE *reading() {
@@ -21,22 +20,32 @@ int main() {
 
     start_timer(&timer);
     printf("Olá mundo\n");
-
+    
+    Lista *lista_nomes = cria_lista();
     FILE *arquivo = reading();
 
-    char nomes[500];
-
+    int progresso = 1;
+    char linha[500];
     if(arquivo != NULL) {
-        while(fgets(nomes, 500, arquivo) != NULL) {
-            printf("%s", nomes);
+        while(fgets(linha, sizeof(linha), arquivo)) {
+            Nome nome;
+            sscanf(linha, "%[^\n]", nome.nome);
+            insere_lista_inicio(lista_nomes, nome);
+            printf("\r%d", progresso);
+            progresso++;
         }
     }
-
     fclose(arquivo);
+    printf("\nArquivo lido com sucesso!\n");
 
+    bubble_sort_nomes(lista_nomes);
+    printf("\nOrdenado com sucesso!\n");
+    
     stop_timer(&timer);
 
     double elapsed = elapsed_time(&timer);
     printf("Tempo de execução: %.6f segundos\n", elapsed);
+
+    libera_lista(lista_nomes);
     return 0;
 }
