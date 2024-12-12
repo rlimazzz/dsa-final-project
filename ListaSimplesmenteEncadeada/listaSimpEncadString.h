@@ -1,15 +1,29 @@
 typedef struct {
-    char nome[100];
-} Nome;
+    char name[100];
+} Name;
 
-typedef struct elemento* Lista;
+typedef struct stringElement* ListString;
+typedef struct numberElement* ListNumber;
 
-Lista* cria_lista();
-void libera_lista(Lista* li);
-int insere_lista_inicio(Lista* li, Nome nome);
-int remove_lista_inicio(Lista* li);
-int tamanho_lista(Lista* li);
-void escreve_lista_em_arquivo(Lista* li, const char* nome_arquivo);
+//Strings
+ListString* createListString();
+void freeStr(ListString* list);
+int insertInit(ListString* list, Name name);
+int removeInit(ListString* list);
+int sizeStr(ListString* list);
+void writeFileStr(ListString* list, const char* name_file);
+
+//Numeros
+ListNumber* createListNumber();
+void freeNumber(ListNumber* list);
+int insertInitNumber(ListNumber* list, Name name);
+int removeInitNumber(ListNumber* list);
+int sizeNumber(ListNumber* list);
+void writeFileNumber(ListNumber* list, const char* name_file);
 
 // algoritmos de ordenação
-void bubble_sort_nomes(Lista* li);
+void bubble_sort_nomes(ListString* list);
+//void bubble_sort_number();
+
+//void merge_sort_names();
+//void merge_sort_number();

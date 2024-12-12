@@ -4,116 +4,116 @@
 #include "listaSimpEncadString.h" //inclui os Protótipos
 
 //Definição do tipo lista
-struct elemento{
-    Nome dados;
-    struct elemento *prox;
+struct stringElement{
+    Name data;
+    struct stringElement *next;
 };
-typedef struct elemento Elem;
+typedef struct stringElement Element;
 
-Lista* cria_lista(){
-    Lista* li = (Lista*) malloc(sizeof(Lista));
-    if(li != NULL)
-        *li = NULL;
-    return li;
+ListString* createListString(){
+    ListString* list = (ListString*) malloc(sizeof(ListString));
+    if(list != NULL)
+        *list = NULL;
+    return list;
 }
 
-void libera_lista(Lista* li){
-    if(li != NULL){
-        Elem* no;
-        while((*li) != NULL){
-            no = *li;
-            *li = (*li)->prox;
-            free(no);
+void freeStr(ListString* list){
+    if(list != NULL){
+        Element* node;
+        while((*list) != NULL){
+            node = *list;
+            *list = (*list)->next;
+            free(node);
         }
-        free(li);
+        free(list);
     }
 }
 
-int insere_lista_inicio(Lista* li, Nome nome){
-    if(li == NULL)
+int insertInit(ListString* list, Name name){
+    if(list == NULL)
         return 0;
-    Elem* no;
-    no = (Elem*) malloc(sizeof(Elem));
-    if(no == NULL)
+    Element* node;
+    node = (Element*) malloc(sizeof(Element));
+    if(node == NULL)
         return 0;
-    no->dados = nome;
-    no->prox = (*li);
-    *li = no;
+    node->data = name;
+    node->next = (*list);
+    *list = node;
     return 1;
 }
 
-int remove_lista_inicio(Lista* li){
-    if(li == NULL)
+int removeInit(ListString* list){
+    if(list == NULL)
         return 0;
-    if((*li) == NULL)//lista vazia
+    if((*list) == NULL)
         return 0;
 
-    Elem *no = *li;
-    *li = no->prox;
-    free(no);
+    Element *node = *list;
+    *list = node->next;
+    free(node);
     return 1;
 }
 
-int tamanho_lista(Lista* li){
-    if(li == NULL)
+int sizeStr(ListString* list){
+    if(list == NULL)
         return 0;
     int cont = 0;
-    Elem* no = *li;
-    while(no != NULL){
+    Element* node = *list;
+    while(node != NULL){
         cont++;
-        no = no->prox;
+        node = node->next;
     }
     return cont;
 }
 
-void escreve_lista_em_arquivo(Lista* li, const char* nome_arquivo) {
-    if (li == NULL || *li == NULL) {
+void writeFileStr(ListString* list, const char* name_file) {
+    if (list == NULL || *list == NULL) {
         printf("A lista está vazia.\n");
         return;
     }
 
     // Abre o arquivo em modo de escrita
-    FILE *arquivo = fopen(nome_arquivo, "w");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo '%s'.\n", nome_arquivo);
+    FILE *file = fopen(name_file, "w");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo '%s'.\n", name_file);
         return;
     }
 
     // Percorre a lista e escreve cada elemento em uma nova linha
-    Elem* no = *li;
-    while (no != NULL) {
-        fprintf(arquivo, "%s\n", no->dados.nome);
-        no = no->prox;
+    Element* node = *list;
+    while (node != NULL) {
+        fprintf(file, "%s\n", node->data.name);
+        node = node->next;
     }
-    fclose(arquivo);
+    fclose(file);
 
-    printf("Lista escrita com sucesso no arquivo '%s'.\n", nome_arquivo);
+    printf("Lista escrita com sucesso no arquivo '%s'.\n", name_file);
 }
 
 //Algoritmos de ordenação
 
-void bubble_sort_nomes(Lista* li) {
-    if (li == NULL || *li == NULL)
+void bubble_sort_nomes(ListString* list) {
+    if (list == NULL || *list == NULL)
         return;
 
-    int trocou;
-    Elem* no;
-    int limite = tamanho_lista(li);
-    printf("%d\n", limite);
+    int toggle;
+    Element* node;
+    int limit = sizeStr(list);
+    printf("%d\n", limit);
     do {
-        trocou = 0;
-        no = *li;
+        toggle = 0;
+        node = *list;
 
-        for (int i = 0; i < limite - 1; i++) {
-            if (strcmp(no->dados.nome, no->prox->dados.nome) > 0) {
-                Nome temp = no->dados;
-                no->dados = no->prox->dados;
-                no->prox->dados = temp;
-                trocou = 1;
+        for (int i = 0; i < limit - 1; i++) {
+            if (strcmp(node->data.name, node->next->data.name) > 0) {
+                Name temp = node->data;
+                node->data = node->next->data;
+                node->next->data = temp;
+                toggle = 1;
             }
-            no = no->prox;
+            node = node->next;
         }
-        printf("\r%d", limite);
-        limite--; 
-    } while (trocou);
+        printf("\r%d", limit);
+        limit--; 
+    } while (toggle);
 }
