@@ -1,25 +1,25 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include "listaSimpEncad.h"
+#include <stdlib.h>
+#include <string.h>
+#include "listaSimpEncadString.h" //inclui os Protótipos
 
-struct elemento {
-    int dados;
+//Definição do tipo lista
+struct elemento{
+    Nome dados;
     struct elemento *prox;
 };
+typedef struct elemento Elem;
 
-Lista* cria_lista() {
+Lista* cria_lista(){
     Lista* li = (Lista*) malloc(sizeof(Lista));
-
-    if(li != NULL) {
+    if(li != NULL)
         *li = NULL;
-    }
-
     return li;
 }
 
 void libera_lista(Lista* li){
     if(li != NULL){
-        Elemento* no;
+        Elem* no;
         while((*li) != NULL){
             no = *li;
             *li = (*li)->prox;
@@ -29,20 +29,14 @@ void libera_lista(Lista* li){
     }
 }
 
-int insere_lista_inicio(Lista *li, int elem) {
-    if(li == NULL) {
+int insere_lista_inicio(Lista* li, Nome nome){
+    if(li == NULL)
         return 0;
-    }
-
-    Elemento* no;
-
-    no = (Elemento*) malloc(sizeof(Elemento));
-
-    if(no == NULL) {
+    Elem* no;
+    no = (Elem*) malloc(sizeof(Elem));
+    if(no == NULL)
         return 0;
-    }
-
-    no->dados = elem;
+    no->dados = nome;
     no->prox = (*li);
     *li = no;
     return 1;
@@ -54,64 +48,72 @@ int remove_lista_inicio(Lista* li){
     if((*li) == NULL)//lista vazia
         return 0;
 
-    Elemento *no = *li;
+    Elem *no = *li;
     *li = no->prox;
     free(no);
     return 1;
 }
 
-int remove_primeirosn(Lista *li, int n) {
-    if(li == NULL) {
+int tamanho_lista(Lista* li){
+    if(li == NULL)
         return 0;
+    int cont = 0;
+    Elem* no = *li;
+    while(no != NULL){
+        cont++;
+        no = no->prox;
     }
-    if((*li) == NULL) {
-        return 0;
-    }
-
-    for(int i = 0;i < n;i++) {
-        Elemento *no = *li;
-        *li = no->prox;
-        free(no);
-    }
-
-    return 1;
+    return cont;
 }
 
-int remove_ultimosn(Lista *li, int n) {
-    if(li == NULL) {
-        return 0;
-    }
-    if((*li) == NULL) {
-        return 0;
-    }
-
-    Elemento *ant, *no = *li;
-    while(n--) {
-        while(no->prox != NULL){
-            ant = no;
-            no = no->prox;
-        }
-
-        if(no == (*li))//remover o primeiro?
-            *li = no->prox;
-        else
-            ant->prox = no->prox;
-        free(no);
-    }
-
-    return 1;
-}
-
-void imprime_lista(Lista *li) {
-    if(li == NULL) {
+void escreve_lista_em_arquivo(Lista* li, const char* nome_arquivo) {
+    if (li == NULL || *li == NULL) {
+        printf("A lista está vazia.\n");
         return;
     }
 
-    Elemento *no = *li;
+    // Abre o arquivo em modo de escrita
+    FILE *arquivo = fopen(nome_arquivo, "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo '%s'.\n", nome_arquivo);
+        return;
+    }
 
-    while(no != NULL) {
-        printf("Váriavel : %d\n", no->dados);
-
+    // Percorre a lista e escreve cada elemento em uma nova linha
+    Elem* no = *li;
+    while (no != NULL) {
+        fprintf(arquivo, "%s\n", no->dados.nome);
         no = no->prox;
     }
+    fclose(arquivo);
+
+    printf("Lista escrita com sucesso no arquivo '%s'.\n", nome_arquivo);
+}
+
+//Algoritmos de ordenação
+
+void bubble_sort_nomes(Lista* li) {
+    if (li == NULL || *li == NULL)
+        return;
+
+    int trocou;
+    Elem* no;
+    int limite = tamanho_lista(li);
+    printf("%d\n", limite);
+    do {
+        trocou = 0;
+        no = *li;
+
+        for (int i = 0; i < limite - 1; i++) {
+            if (strcmp(no->dados.nome, no->prox->dados.nome) > 0) {
+                Nome temp = no->dados;
+                no->dados = no->prox->dados;
+                no->prox->dados = temp;
+                trocou = 1;
+            }
+            no = no->prox;
+        }
+        printf("\r%d", limite);
+        limite--; 
+    } while (trocou);
 }
