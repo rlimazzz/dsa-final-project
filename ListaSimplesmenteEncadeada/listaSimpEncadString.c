@@ -321,50 +321,47 @@ void split_list(ListString source, ListString* frontRef, ListString* backRef) {
 }
 
 ListString merge_sorted_lists(ListString a, ListString b) {
-    ListString result = NULL;
+    ListString result = NULL, tail = NULL;
 
-    if (a == NULL) {
-        return b;
-    } else if (b == NULL) {
-        return a;
+    while (a != NULL && b != NULL) {
+        ListString temp;
+        if (strcmp(a->data.name, b->data.name) <= 0) {
+            temp = a;
+            a = a->next;
+        } else {
+            temp = b;
+            b = b->next;
+        }
+
+        if (result == NULL) {
+            result = temp;
+        } else {
+            tail->next = temp;
+        }
+        tail = temp;
     }
 
-    if (strcmp(a->data.name, b->data.name) <= 0) {
-        result = a;
-        result->next = merge_sorted_lists(a->next, b);
+    if (a != NULL) {
+        tail->next = a;
     } else {
-        result = b;
-        result->next = merge_sorted_lists(a, b->next);
-        trocas++; 
+        tail->next = b;
     }
 
     return result;
 }
 
 void merge_sort_names(ListString* list) {
-    printf("\nInit: %s\n", *list ? (*list)->data.name : "NULL");
-
-    ListString head = *list;
-    ListString a = NULL;
-    ListString b = NULL;
-
-    if (head == NULL || head->next == NULL) {
-        printf("\nReturn: %s\n", head ? head->data.name : "NULL");
+    if (list == NULL || *list == NULL || (*list)->next == NULL) {
         return;
     }
 
-    split_list(head, &a, &b);
-
-    printf("\nSplit into: %s and %s\n", 
-           a ? a->data.name : "NULL", 
-           b ? b->data.name : "NULL");
-
+    ListString a = NULL, b = NULL;
+    split_list(*list, &a, &b);
+    
     merge_sort_names(&a);
     merge_sort_names(&b);
-
+    
     *list = merge_sorted_lists(a, b);
-
-    printf("\nMerged: %s\n", *list ? (*list)->data.name : "NULL");
 }
 
 
@@ -401,28 +398,37 @@ void split_list_number(ListNumber source, ListNumber* frontRef, ListNumber* back
 }
 
 ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
-    ListNumber result = NULL;
+    ListNumber result = NULL, tail = NULL;
 
-    if (a == NULL) {
-        return b;
-    } else if (b == NULL) {
-        return a;
+    while (a != NULL && b != NULL) {
+        ListNumber temp;
+        if (a->data.number <= b->data.number) {
+            temp = a;
+            a = a->next;
+        } else {
+            temp = b;
+            b = b->next;
+        }
+
+        if (result == NULL) {
+            result = temp;
+        } else {
+            tail->next = temp;
+        }
+        tail = temp;
     }
 
-    if (a->data.number > b->data.number) {
-        result = b;
-        result->next = merge_sorted_lists_number(a, b->next);
-        merge_trocas_number++;
+    if (a != NULL) {
+        tail->next = a;
     } else {
-        result = a;
-        result->next = merge_sorted_lists_number(a->next, b);
+        tail->next = b;
     }
 
     return result;
 }
 
+
 void merge_sort_number(ListNumber* list) {
-    printf("\nInit\n");
     clock_t inicio = clock();
 
     ListNumber head = *list;
@@ -430,7 +436,6 @@ void merge_sort_number(ListNumber* list) {
     ListNumber b = NULL;
 
     if (head == NULL || head->next == NULL) {
-        printf("\nReturn\n");
         return;
     }
 
