@@ -357,6 +357,8 @@ void merge_sort_names(ListString* list) {
         return;
     }
 
+    clock_t inicio = clock();
+
     ListString a = NULL, b = NULL;
     split_list(*list, &a, &b);
     
@@ -364,6 +366,10 @@ void merge_sort_names(ListString* list) {
     merge_sort_names(&b);
     
     *list = merge_sorted_lists(a, b);
+
+    clock_t final = clock();
+    printf("\nTrocas: %d\n", trocas);
+    printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);
 }
 
 
