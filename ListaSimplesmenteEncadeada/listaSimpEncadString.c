@@ -299,3 +299,151 @@ void bubble_sort_numeros(ListNumber* list) {
     printf("\nTrocas: %.2lf\n", trocas);
     printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);    
 }
+
+int trocas = 0;
+
+//merge sort para ordenar os nomes
+void split_list(ListString source, ListString* frontRef, ListString* backRef) {
+    ListString slow = source;
+    ListString fast = source->next;
+
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    *frontRef = source;
+    *backRef = slow->next;
+    slow->next = NULL;
+}
+
+ListString merge_sorted_lists(ListString a, ListString b) {
+    ListString result = NULL;
+
+    if (a == NULL) {
+        return b;
+    } else if (b == NULL) {
+        return a;
+    }
+
+    if (strcmp(a->data.name, b->data.name) <= 0) {
+        result = a;
+        result->next = merge_sorted_lists(a->next, b);
+    } else {
+        result = b;
+        result->next = merge_sorted_lists(a, b->next);
+        trocas++; 
+    }
+
+    return result;
+}
+
+void merge_sort_names(ListString* list) {
+    printf("\nInit: %s\n", *list ? (*list)->data.name : "NULL");
+
+    ListString head = *list;
+    ListString a = NULL;
+    ListString b = NULL;
+
+    if (head == NULL || head->next == NULL) {
+        printf("\nReturn: %s\n", head ? head->data.name : "NULL");
+        return;
+    }
+
+    split_list(head, &a, &b);
+
+    printf("\nSplit into: %s and %s\n", 
+           a ? a->data.name : "NULL", 
+           b ? b->data.name : "NULL");
+
+    merge_sort_names(&a);
+    merge_sort_names(&b);
+
+    *list = merge_sorted_lists(a, b);
+
+    printf("\nMerged: %s\n", *list ? (*list)->data.name : "NULL");
+}
+
+
+ListString create_node(char* data) {
+    ListString newNode = (ListString)malloc(sizeof(ElementS));
+    if (!newNode) {
+        fprintf(stderr, "Falha na alocação de memória.\n");
+        exit(EXIT_FAILURE);
+    }
+    strncpy(newNode->data.name, data, sizeof(newNode->data.name) - 1);
+    newNode->data.name[sizeof(newNode->data.name) - 1] = '\0';
+    newNode->next = NULL;
+    return newNode;
+}
+
+int merge_trocas_number = 0;
+
+//merge sort para ordenar os numeros
+void split_list_number(ListNumber source, ListNumber* frontRef, ListNumber* backRef) {
+    ListNumber slow = source;
+    ListNumber fast = source->next;
+
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    *frontRef = source;
+    *backRef = slow->next;
+    slow->next = NULL;
+}
+
+ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
+    ListNumber result = NULL;
+
+    if (a == NULL) {
+        return b;
+    } else if (b == NULL) {
+        return a;
+    }
+
+    if (a->data.number > b->data.number) {
+        result = b;
+        result->next = merge_sorted_lists_number(a, b->next);
+        merge_trocas_number++;
+    } else {
+        result = a;
+        result->next = merge_sorted_lists_number(a->next, b);
+    }
+
+    return result;
+}
+
+void merge_sort_number(ListNumber* list) {
+    printf("\nInit\n");
+    clock_t inicio = clock();
+
+    ListNumber head = *list;
+    ListNumber a = NULL;
+    ListNumber b = NULL;
+
+    if (head == NULL || head->next == NULL) {
+        printf("\nReturn\n");
+        return;
+    }
+
+    split_list_number(head, &a, &b);
+
+    merge_sort_number(&a);
+    merge_sort_number(&b);
+
+    *list = merge_sorted_lists_number(a, b);
+
+    clock_t final = clock();
+    printf("\nTrocas: %d\n", merge_trocas_number);
+    printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);
+}
+
+

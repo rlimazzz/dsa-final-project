@@ -31,5 +31,5 @@ void writeFileNumber(ListNumber* list, const char* name_file);
 void bubble_sort_nomes(ListString* list);
 void bubble_sort_numeros(ListNumber* list);
 
-//void merge_sort_names();
-//void merge_sort_number();
+void merge_sort_names(ListString* list);
+void merge_sort_number();
