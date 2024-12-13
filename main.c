@@ -8,13 +8,13 @@ int main(){
     ListString *lista_nomes = createListString();
     
     printf("Digite o numero da entrada numerica que eleva 10:\n");
-    char file_name[20];
+    char file_name[35];
     int num;
     scanf("%d", &num);
-    sprintf(file_name, "numeros_10^%d.bin", num);
+    sprintf(file_name, "ArquivoLeitura/numeros_10^%d.bin", num);
 
     insert_bin(file_name, lista_numeros);
-    insert_txt("nomes_aleatorios.txt", lista_nomes);
+    insert_txt("ArquivoLeitura/nomes_aleatorios.txt", lista_nomes);
 
     printf("\nBubble Sort para entrada numerica:");
     bubble_sort_numeros(lista_numeros);
