@@ -331,6 +331,7 @@ ListString merge_sorted_lists(ListString a, ListString b) {
         } else {
             temp = b;
             b = b->next;
+            trocas++; 
         }
 
         if (result == NULL) {
@@ -349,6 +350,7 @@ ListString merge_sorted_lists(ListString a, ListString b) {
 
     return result;
 }
+
 
 void merge_sort_names(ListString* list) {
     if (list == NULL || *list == NULL || (*list)->next == NULL) {
@@ -408,6 +410,7 @@ ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
         } else {
             temp = b;
             b = b->next;
+            merge_trocas_number++;
         }
 
         if (result == NULL) {
@@ -426,6 +429,7 @@ ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
 
     return result;
 }
+
 
 
 void merge_sort_number(ListNumber* list) {

@@ -11,7 +11,7 @@ int main(){
     char file_name[35];
     //int num;
     //scanf("%d", &num);
-    int num = 3;
+    int num = 6;
     sprintf(file_name, "ArquivoLeitura/numeros_10^%d.bin", num);
 
     insert_bin(file_name, lista_numeros);
