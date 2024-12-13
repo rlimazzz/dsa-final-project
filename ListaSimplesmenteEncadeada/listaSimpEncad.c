@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "listaSimpEncadString.h" //inclui os Protótipos
+#include "listaSimpEncad.h" //inclui os Protótipos
 
 // -------------------------------------------------------------------------------------
 //                              Implementação das listas
@@ -81,7 +81,7 @@ void insert_txt(const char *name_file, ListString* list) {
 
     int progresso = 1;
     printf("\nLendo o arquivo nomes_aleatorios.txt:\n");
-    char linha[100];
+    char linha[1000];
     if(name_file != NULL) {
         while(fgets(linha, sizeof(linha), file)) {
             Name nome;
@@ -266,8 +266,8 @@ void bubble_sort_nomes(ListString* list) {
     printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);
 }
 
-// Bubble sort para ordenar os numeros
-void bubble_sort_numeros(ListNumber* list) {
+// Bubble sort para ordenar os numeros de forma crescente
+void bubble_sort_numeros_crescente(ListNumber* list) {
     if (list == NULL || *list == NULL)
         return;
 
@@ -300,9 +300,43 @@ void bubble_sort_numeros(ListNumber* list) {
     printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);    
 }
 
-int trocas = 0;
+// Bubble sort para ordenar os numeros de forma decrescente
+void bubble_sort_numeros_decrescente(ListNumber* list) {
+    if (list == NULL || *list == NULL)
+        return;
 
-//merge sort para ordenar os nomes
+    int toggle;
+    double trocas = 0;
+    ElementN *node, *next = NULL;
+
+    clock_t inicio = clock();
+    do {
+        toggle = 0;
+        node = *list;
+
+        while (node->next != next) {
+            // (> 0) ordena de forma crescente e (< 0) ordena de forma descrescente
+            if (node->data.number < node->next->data.number) {
+                Number temp = node->data;
+                node->data = node->next->data;
+                node->next->data = temp;
+
+                toggle++;
+                trocas++;
+            }
+            node = node->next;
+        }
+        next = node->next;
+    } while (toggle != 0);
+    clock_t final = clock();
+
+    printf("\nTrocas: %.2lf\n", trocas);
+    printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);    
+}
+
+// ---------------------------------------------------- MERGE SORT --------------------------------------------------------------
+
+
 void split_list(ListString source, ListString* frontRef, ListString* backRef) {
     ListString slow = source;
     ListString fast = source->next;
@@ -320,7 +354,7 @@ void split_list(ListString source, ListString* frontRef, ListString* backRef) {
     slow->next = NULL;
 }
 
-ListString merge_sorted_lists(ListString a, ListString b) {
+ListString merge_sorted_lists(ListString a, ListString b, double* troca_count) {
     ListString result = NULL, tail = NULL;
 
     while (a != NULL && b != NULL) {
@@ -331,8 +365,9 @@ ListString merge_sorted_lists(ListString a, ListString b) {
         } else {
             temp = b;
             b = b->next;
-            trocas++; 
         }
+
+        (*troca_count)++;
 
         if (result == NULL) {
             result = temp;
@@ -352,40 +387,20 @@ ListString merge_sorted_lists(ListString a, ListString b) {
 }
 
 
-void merge_sort_names(ListString* list) {
+void merge_sort_names(ListString* list, double* troca_count) {
     if (list == NULL || *list == NULL || (*list)->next == NULL) {
         return;
     }
 
-    clock_t inicio = clock();
-
     ListString a = NULL, b = NULL;
     split_list(*list, &a, &b);
     
-    merge_sort_names(&a);
-    merge_sort_names(&b);
+    merge_sort_names(&a, troca_count);
+    merge_sort_names(&b, troca_count);
     
-    *list = merge_sorted_lists(a, b);
-
-    clock_t final = clock();
-    printf("\nTrocas: %d\n", trocas);
-    printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);
+    *list = merge_sorted_lists(a, b, troca_count);
 }
 
-
-ListString create_node(char* data) {
-    ListString newNode = (ListString)malloc(sizeof(ElementS));
-    if (!newNode) {
-        fprintf(stderr, "Falha na alocação de memória.\n");
-        exit(EXIT_FAILURE);
-    }
-    strncpy(newNode->data.name, data, sizeof(newNode->data.name) - 1);
-    newNode->data.name[sizeof(newNode->data.name) - 1] = '\0';
-    newNode->next = NULL;
-    return newNode;
-}
-
-int merge_trocas_number = 0;
 
 //merge sort para ordenar os numeros
 void split_list_number(ListNumber source, ListNumber* frontRef, ListNumber* backRef) {
@@ -405,7 +420,7 @@ void split_list_number(ListNumber source, ListNumber* frontRef, ListNumber* back
     slow->next = NULL;
 }
 
-ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
+ListNumber merge_sorted_lists_number_crescente(ListNumber a, ListNumber b, double* troca_count) {
     ListNumber result = NULL, tail = NULL;
 
     while (a != NULL && b != NULL) {
@@ -416,8 +431,9 @@ ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
         } else {
             temp = b;
             b = b->next;
-            merge_trocas_number++;
         }
+
+        (*troca_count)++;
 
         if (result == NULL) {
             result = temp;
@@ -436,10 +452,39 @@ ListNumber merge_sorted_lists_number(ListNumber a, ListNumber b) {
     return result;
 }
 
+ListNumber merge_sorted_lists_number_decrescente(ListNumber a, ListNumber b, double* troca_count) {
+    ListNumber result = NULL, tail = NULL;
 
+    while (a != NULL && b != NULL) {
+        ListNumber temp;
+        if (a->data.number >= b->data.number) {
+            temp = a;
+            a = a->next;
+        } else {
+            temp = b;
+            b = b->next;
+        }
 
-void merge_sort_number(ListNumber* list) {
-    clock_t inicio = clock();
+        (*troca_count)++;
+
+        if (result == NULL) {
+            result = temp;
+        } else {
+            tail->next = temp;
+        }
+        tail = temp;
+    }
+
+    if (a != NULL) {
+        tail->next = a;
+    } else {
+        tail->next = b;
+    }
+
+    return result;
+}
+
+void merge_sort_number_crescente(ListNumber* list, double* troca_count) {
 
     ListNumber head = *list;
     ListNumber a = NULL;
@@ -451,14 +496,26 @@ void merge_sort_number(ListNumber* list) {
 
     split_list_number(head, &a, &b);
 
-    merge_sort_number(&a);
-    merge_sort_number(&b);
+    merge_sort_number_crescente(&a, troca_count);
+    merge_sort_number_crescente(&b, troca_count);
 
-    *list = merge_sorted_lists_number(a, b);
-
-    clock_t final = clock();
-    printf("\nTrocas: %d\n", merge_trocas_number);
-    printf("Tempo: %lu ms\n", (final - inicio) * 1000 / CLOCKS_PER_SEC);
+    *list = merge_sorted_lists_number_crescente(a, b, troca_count);
 }
 
+void merge_sort_number_decrescente(ListNumber* list, double* troca_count) {
 
+    ListNumber head = *list;
+    ListNumber a = NULL;
+    ListNumber b = NULL;
+
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
+
+    split_list_number(head, &a, &b);
+
+    merge_sort_number_decrescente(&a, troca_count);
+    merge_sort_number_decrescente(&b, troca_count);
+
+    *list = merge_sorted_lists_number_decrescente(a, b, troca_count);
+}
