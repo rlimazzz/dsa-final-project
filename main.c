@@ -1,51 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "./MergeSort/mergeS.h"
 #include "./ListaSimplesmenteEncadeada/listaSimpEncadString.h"
-#include "./Timer/timer.h"
 
-FILE *reading() {
-    FILE *file = fopen("./ArquivoLeitura/nomes_aleatorios.txt", "r");
+int main(){
 
-    if(file == NULL) {
-        printf("O arquivo não pode ser aberto\n");
-        exit(0);
-    }
-
-    return file;
-}
-
-int main() {
-    Timer timer;
-
-    start_timer(&timer);
-    printf("Olá mundo\n");
+    ListNumber *lista_numeros = createListNumber();
+    ListString *lista_nomes = createListString();
     
-    Lista *lista_nomes = cria_lista();
-    FILE *arquivo = reading();
+    printf("Digite o numero da entrada numerica que eleva 10:\n");
+    char file_name[20];
+    int num;
+    scanf("%d", &num);
+    sprintf(file_name, "numeros_10^%d.bin", num);
 
-    int progresso = 1;
-    char linha[500];
-    if(arquivo != NULL) {
-        while(fgets(linha, sizeof(linha), arquivo)) {
-            Nome nome;
-            sscanf(linha, "%[^\n]", nome.nome);
-            insere_lista_inicio(lista_nomes, nome);
-            printf("\r%d", progresso);
-            progresso++;
-        }
-    }
-    fclose(arquivo);
-    printf("\nArquivo lido com sucesso!\n");
+    insert_bin(file_name, lista_numeros);
+    insert_txt("nomes_aleatorios.txt", lista_nomes);
 
+    printf("\nBubble Sort para entrada numerica:");
+    bubble_sort_numeros(lista_numeros);
+
+    printf("\nBubble Sort para entrada textual:");
     bubble_sort_nomes(lista_nomes);
-    printf("\nOrdenado com sucesso!\n");
-    
-    stop_timer(&timer);
 
-    double elapsed = elapsed_time(&timer);
-    printf("Tempo de execução: %.6f segundos\n", elapsed);
+    // escrevendo os arquivos ordenados
+    writeFileNumber(lista_numeros, "numeros_ordenados.txt");
+    writeFileStr(lista_nomes, "nomes_ordenados.txt");
 
-    libera_lista(lista_nomes);
-    return 0;
+    freeNumber(lista_numeros);
+    freeStr(lista_nomes);
 }
